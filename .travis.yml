@@ -1,0 +1,26 @@
+language: node_js
+node_js:
+  - "stable"
+
+services:
+  - docker
+
+cache:
+  directories:
+    - node_modules
+
+install:
+  - yarn
+
+script:
+  - yarn build
+  - docker build -t bwerquin/metallica .
+
+deploy:
+  skip_cleanup: true
+  provider: script
+  script:
+    echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+    && docker push bwerquin/metallica
+  on:
+    branch: master
